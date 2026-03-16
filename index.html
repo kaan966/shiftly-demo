@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shiftly — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --brand:#0F6E56;--brand-l:#E1F5EE;--brand-b:#9FE1CB;
+  --acc:#D85A30;--acc-l:#FAECE7;--acc-b:#F5C4B3;
+  --bg:#ffffff;--bg2:#F5F5F3;--bg3:#EEEDE8;
+  --t1:#1a1a18;--t2:#6b6b67;--t3:#9e9e9a;
+  --bdr:rgba(26,26,24,0.10);--bdr2:rgba(26,26,24,0.20);
+  --r:12px;--rs:8px;--rf:999px;
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+body{font-family:var(--fb);background:#1a1a18;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:32px 16px 48px;}
+
+.demo-label{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;text-align:center;letter-spacing:0.03em;}
+.demo-title{font-family:var(--fd);font-size:28px;font-weight:800;color:#fff;margin-bottom:4px;text-align:center;letter-spacing:-0.5px;}
+.demo-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;text-align:center;}
+
+.phone{width:375px;background:#0a0a0a;border-radius:52px;padding:14px;border:1px solid #2a2a2a;position:relative;}
+.phone-inner{background:var(--bg3);border-radius:40px;overflow:hidden;height:780px;position:relative;display:flex;flex-direction:column;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#0a0a0a;border-radius:0 0 20px 20px;z-index:50;display:flex;align-items:center;justify-content:center;gap:6px;}
+.notch-cam{width:10px;height:10px;border-radius:50%;background:#1a1a1a;}
+.notch-ear{width:40px;height:5px;border-radius:3px;background:#1a1a1a;}
+.phone-btn-r{position:absolute;right:-5px;top:140px;width:4px;height:60px;background:#1a1a1a;border-radius:2px;}
+.phone-btn-l1{position:absolute;left:-5px;top:120px;width:4px;height:32px;background:#1a1a1a;border-radius:2px;}
+.phone-btn-l2{position:absolute;left:-5px;top:162px;width:4px;height:32px;background:#1a1a1a;border-radius:2px;}
+.phone-btn-l3{position:absolute;left:-5px;top:100px;width:4px;height:24px;background:#1a1a1a;border-radius:2px;}
+
+.statusbar{height:44px;padding:0 28px 6px;display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;background:var(--bg);position:relative;z-index:10;}
+.sb-time{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--t1);}
+.sb-icons{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t1);}
+
+.app-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg3);}
+
+.topnav{background:var(--bg);border-bottom:0.5px solid var(--bdr);height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;}
+.logo{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--brand);display:flex;align-items:center;gap:5px;}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);display:inline-block;}
+.mode-toggle{display:flex;background:var(--bg2);border-radius:var(--rf);padding:3px;gap:2px;border:0.5px solid var(--bdr);}
+.mtb{font-family:var(--fb);font-size:12px;font-weight:500;padding:4px 12px;border-radius:var(--rf);border:none;cursor:pointer;transition:all .2s;color:var(--t2);background:transparent;}
+.mtb.active{background:var(--bg);color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.nav-av{width:30px;height:30px;border-radius:50%;background:var(--brand-l);color:var(--brand);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;font-weight:700;border:0.5px solid var(--brand-b);}
+
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:60px;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+.bnav{height:60px;background:var(--bg);border-top:0.5px solid var(--bdr);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:4px;}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;font-family:var(--fb);font-size:9px;color:var(--t3);transition:color .15s;padding:6px 0;position:relative;}
+.bnav-btn.active{color:var(--brand);}
+.bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;}
+.nbadge{position:absolute;top:4px;right:calc(50% - 18px);width:14px;height:14px;background:var(--acc);border-radius:50%;font-size:8px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;}
+
+.page{display:none;}.page.active{display:block;}
+
+.hero{background:var(--bg);border-bottom:0.5px solid var(--bdr);padding:14px 18px;}
+.hero-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.greet-sub{font-size:11px;color:var(--t2);margin-bottom:2px;}
+.greet-name{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--t1);}
+.online-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--rf);border:0.5px solid var(--bdr2);background:var(--bg2);cursor:pointer;font-size:12px;font-weight:500;color:var(--t2);transition:all .2s;font-family:var(--fb);}
+.online-btn.on{background:var(--brand-l);border-color:var(--brand-b);color:var(--brand);}
+.odot{width:7px;height:7px;border-radius:50%;background:var(--t3);transition:background .2s;}
+.online-btn.on .odot{background:var(--brand);}
+.stats-g{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.sc{background:var(--bg2);border-radius:var(--rs);padding:9px;text-align:center;}
+.sv{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--t1);}
+.sl{font-size:10px;color:var(--t2);margin-top:2px;}
+
+.card{background:var(--bg);border:0.5px solid var(--bdr);border-radius:var(--r);}
+.cl{padding:0 14px;display:flex;flex-direction:column;gap:9px;}
+.sec{margin-top:10px;}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:0 18px 6px;}
+.st{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);}
+.sa{font-size:12px;color:var(--brand);cursor:pointer;font-weight:500;}
+
+.jc{padding:13px 15px;cursor:pointer;transition:border-color .15s;}
+.jc:hover{border-color:var(--bdr2);}
+.jc.urg{border-left:2.5px solid var(--acc);}
+.jt{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+.jbiz{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t1);}
+.jrole{font-size:11px;color:var(--t2);margin-top:1px;}
+.jpay{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--brand);}
+.jpsub{font-size:10px;color:var(--t2);}
+.jtags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px;}
+.tag{display:inline-flex;align-items:center;font-size:10px;font-weight:500;padding:2px 7px;border-radius:var(--rf);background:var(--bg2);color:var(--t2);border:0.5px solid var(--bdr);}
+.tag.g{background:var(--brand-l);color:#085041;border-color:var(--brand-b);}
+.tag.r{background:#FCEBEB;color:#791F1F;border-color:#F7C1C1;}
+.tag.o{background:#FAEEDA;color:#633806;border-color:#FAC775;}
+.tag.b{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4;}
+.jactions{display:flex;gap:7px;}
+.btn-p{flex:1;padding:8px;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);font-family:var(--fb);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s;}
+.btn-p:hover{opacity:.88;}
+.btn-s{padding:8px 13px;background:transparent;color:var(--t2);border:0.5px solid var(--bdr2);border-radius:var(--rs);font-family:var(--fb);font-size:12px;cursor:pointer;}
+
+.ajb{margin:9px 14px 0;background:var(--brand);border-radius:var(--r);padding:12px 15px;color:#fff;}
+.aj-ey{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:3px;}
+.aj-ti{font-family:var(--fd);font-size:14px;font-weight:700;margin-bottom:8px;}
+.aj-bt{display:flex;align-items:center;justify-content:space-between;}
+.aj-in{font-size:11px;opacity:.85;}
+.btn-ci{padding:6px 12px;background:rgba(255,255,255,.9);color:var(--brand);border:none;border-radius:var(--rs);font-family:var(--fb);font-size:11px;font-weight:600;cursor:pointer;}
+
+.ec{margin:0 14px;padding:14px 15px;}
+.et{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.el{font-size:11px;color:var(--t2);margin-bottom:3px;}
+.ea{font-family:var(--fd);font-size:26px;font-weight:800;letter-spacing:-1px;color:var(--t1);}
+.esub{font-size:11px;color:var(--t2);margin-top:2px;}
+.ebadge{background:var(--brand-l);color:var(--brand);font-size:10px;font-weight:600;padding:3px 8px;border-radius:var(--rf);border:0.5px solid var(--brand-b);}
+.pb{height:4px;background:var(--bg2);border-radius:var(--rf);overflow:hidden;}
+.pbf{height:100%;background:var(--brand);border-radius:var(--rf);}
+
+.mb{margin:9px 14px 0;background:var(--bg);border:0.5px solid var(--bdr2);border-radius:var(--r);padding:11px 13px;display:flex;align-items:center;gap:10px;}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--brand-l);border-top-color:var(--brand);animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.mt-txt{font-size:12px;color:var(--t2);}
+.mt-txt strong{color:var(--t1);}
+
+.bh{background:var(--bg);border-bottom:0.5px solid var(--bdr);padding:14px 18px;}
+.bh-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.bn{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--t1);}
+.bey{font-size:11px;color:var(--t2);margin-bottom:2px;}
+.bm-g{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.bm{background:var(--bg2);border-radius:var(--rs);padding:8px 6px;text-align:center;}
+.bmv{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t1);}
+.bml{font-size:9px;color:var(--t2);margin-top:1px;text-transform:uppercase;letter-spacing:.04em;}
+.btn-acc{display:flex;align-items:center;gap:5px;padding:7px 11px;background:var(--acc);color:#fff;border:none;border-radius:var(--rs);font-family:var(--fb);font-size:11px;font-weight:500;cursor:pointer;}
+
+.shc{padding:13px 15px;cursor:pointer;}
+.sh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.sh-role{font-family:var(--fd);font-size:14px;font-weight:700;}
+.sh-wrow{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.av{border-radius:50%;background:var(--brand-l);color:var(--brand);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;flex-shrink:0;}
+.av-s{width:26px;height:26px;font-size:9px;}
+.sh-wn{font-size:12px;font-weight:500;color:var(--t1);}
+.sh-wr{font-size:10px;color:var(--t2);}
+.sh-acts{display:flex;gap:6px;margin-top:9px;}
+.btn-sm{padding:6px 11px;font-size:11px;font-weight:500;border-radius:var(--rs);cursor:pointer;font-family:var(--fb);border:0.5px solid var(--bdr2);background:transparent;color:var(--t1);}
+.btn-sm.p{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+.pc{padding:11px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;}
+.pi{flex:1;min-width:0;}
+.pn{font-size:13px;font-weight:500;color:var(--t1);}
+.ps{font-size:11px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pr-right{text-align:right;flex-shrink:0;}
+.prate{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--t1);}
+.prel{font-size:10px;color:var(--brand);margin-top:1px;}
+
+.skills-w{padding:0 14px;}
+.skills-r{display:flex;flex-wrap:wrap;gap:5px;}
+.sp{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:var(--rf);border:0.5px solid var(--bdr);font-size:11px;font-weight:500;cursor:pointer;background:var(--bg);color:var(--t2);font-family:var(--fb);transition:all .15s;}
+.sp.active{background:var(--brand-l);border-color:var(--brand-b);color:var(--brand);}
+
+.eh{padding:0 14px;display:flex;flex-direction:column;gap:7px;}
+.er{display:flex;align-items:center;gap:10px;background:var(--bg);border:0.5px solid var(--bdr);border-radius:var(--r);padding:11px 13px;}
+.ei{width:32px;height:32px;border-radius:var(--rs);background:var(--brand-l);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.eri{flex:1;}
+.erb{font-size:12px;font-weight:500;color:var(--t1);}
+.erm{font-size:10px;color:var(--t2);margin-top:1px;}
+.era{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--brand);}
+
+.frow-x{display:flex;gap:5px;padding:0 14px 4px;overflow-x:auto;scrollbar-width:none;}
+.frow-x::-webkit-scrollbar{display:none;}
+.fc{flex-shrink:0;font-size:11px;font-weight:500;padding:4px 10px;border-radius:var(--rf);border:0.5px solid var(--bdr);background:var(--bg);color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all .15s;}
+.fc.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+.prof-h{background:var(--bg);border-bottom:0.5px solid var(--bdr);padding:18px;text-align:center;}
+.pav{width:62px;height:62px;border-radius:50%;background:var(--brand-l);color:var(--brand);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:19px;font-weight:800;margin:0 auto 10px;border:2px solid var(--brand-b);}
+.pname{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--t1);}
+.psub{font-size:11px;color:var(--t2);margin-top:3px;margin-bottom:10px;}
+.pbadges{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;}
+.pstats{display:grid;grid-template-columns:repeat(3,1fr);border-top:0.5px solid var(--bdr);margin-top:14px;}
+.pst{padding:11px 6px;text-align:center;border-right:0.5px solid var(--bdr);}
+.pst:last-child{border-right:none;}
+.psv{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--t1);}
+.psl{font-size:9px;color:var(--t2);margin-top:2px;}
+.prof-sec{background:var(--bg);border:0.5px solid var(--bdr);border-radius:var(--r);margin:0 14px;overflow:hidden;}
+.prow{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:0.5px solid var(--bdr);cursor:pointer;}
+.prow:last-child{border-bottom:none;}
+.prow:hover{background:var(--bg2);}
+.pl{display:flex;align-items:center;gap:9px;}
+.pic{width:28px;height:28px;border-radius:var(--rs);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.plb{font-size:13px;font-weight:500;color:var(--t1);}
+.plsub{font-size:10px;color:var(--t2);margin-top:1px;}
+
+.bc{padding:14px 15px;}
+.bc-title{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--t1);margin-bottom:12px;}
+.bars{display:flex;align-items:flex-end;gap:4px;height:70px;margin-bottom:5px;}
+.bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+.bar{width:100%;background:var(--brand);border-radius:3px 3px 0 0;}
+.bar.f{background:var(--brand-l);}
+.blbl{font-size:9px;color:var(--t3);}
+
+.modal-ov{display:none;position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:flex-end;justify-content:center;border-radius:40px;}
+.modal-ov.open{display:flex;}
+.modal-sh{background:var(--bg);border-radius:24px 24px 0 0;padding:0 18px 24px;width:100%;max-height:82%;overflow-y:auto;}
+.mh-w{padding:10px 0 14px;display:flex;justify-content:center;}
+.mh{width:34px;height:4px;background:var(--bdr2);border-radius:2px;}
+.mtitle{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--t1);margin-bottom:14px;}
+.flbl{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);margin-bottom:5px;}
+.finp,.fsel{width:100%;padding:9px 11px;background:var(--bg2);border:0.5px solid var(--bdr2);border-radius:var(--rs);font-family:var(--fb);font-size:13px;color:var(--t1);outline:none;margin-bottom:12px;}
+.finp:focus,.fsel:focus{border-color:var(--brand);}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.cprev{background:var(--brand-l);border:0.5px solid var(--brand-b);border-radius:var(--rs);padding:12px 14px;display:flex;justify-content:space-between;margin-bottom:12px;}
+.cpl{font-size:10px;color:var(--brand);margin-bottom:3px;font-weight:500;}
+.cpv{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--brand);}
+.btn-full{width:100%;padding:12px;background:var(--acc);color:#fff;border:none;border-radius:var(--rs);font-family:var(--fd);font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.02em;}
+.btn-cancel{width:100%;padding:10px;background:none;border:none;color:var(--t2);font-family:var(--fb);font-size:13px;cursor:pointer;margin-top:6px;}
+.dmap{height:100px;background:var(--bg2);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:12px;margin-bottom:12px;border:0.5px solid var(--bdr);}
+.drow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--bdr);font-size:13px;}
+.drow:last-child{border-bottom:none;}
+.drow span:first-child{color:var(--t2);}
+.drow span:last-child{font-weight:500;}
+.stars{display:flex;gap:8px;margin:10px 0 16px;justify-content:center;}
+.star{font-size:30px;cursor:pointer;color:var(--bdr2);transition:color .1s;background:none;border:none;padding:0;line-height:1;}
+.star.on{color:#EF9F27;}
+
+.toast{position:absolute;bottom:72px;left:50%;transform:translateX(-50%) translateY(6px);background:var(--t1);color:#fff;padding:8px 16px;border-radius:var(--rf);font-size:12px;font-weight:500;z-index:999;opacity:0;transition:all .2s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.demo-controls{margin-top:24px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:375px;}
+.dc-btn{padding:9px 16px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.8);cursor:pointer;font-family:var(--fb);transition:all .15s;font-weight:500;}
+.dc-btn:hover{background:rgba(255,255,255,0.14);color:#fff;}
+
+.share-hint{margin-top:20px;font-size:11px;color:rgba(255,255,255,0.3);text-align:center;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="demo-title">Shiftly</div>
+<div class="demo-sub">On-Demand Labor Platform · İnteraktif Demo</div>
+
+<div style="position:relative;display:inline-block;">
+  <div class="phone-btn-r"></div>
+  <div class="phone-btn-l1"></div>
+  <div class="phone-btn-l2"></div>
+  <div class="phone-btn-l3"></div>
+
+  <div class="phone">
+    <div class="phone-inner">
+      <div class="notch"><div class="notch-cam"></div><div class="notch-ear"></div></div>
+
+      <div class="statusbar">
+        <div class="sb-time">9:41</div>
+        <div class="sb-icons"><span>▲▲▲</span><span style="margin-left:3px;">WiFi</span><span style="margin-left:3px;">🔋</span></div>
+      </div>
+
+      <div class="app-shell">
+        <div class="topnav">
+          <div class="logo"><span class="logo-dot"></span>Shiftly</div>
+          <div class="mode-toggle">
+            <button class="mtb active" id="btnW" onclick="sw('worker')">Worker</button>
+            <button class="mtb" id="btnB" onclick="sw('business')">Business</button>
+          </div>
+          <div class="nav-av" id="navAv">AÇ</div>
+        </div>
+
+        <div class="scroll" id="scrollArea">
+
+          <!-- WORKER: HOME -->
+          <div id="wHome" class="page active">
+            <div class="hero">
+              <div class="hero-row">
+                <div><div class="greet-sub">Merhaba 👋</div><div class="greet-name">Ali Çalışkan</div></div>
+                <button class="online-btn" id="onBtn" onclick="toggleOnline()"><span class="odot" id="odot"></span><span id="olbl">Çevrimdışı</span></button>
+              </div>
+              <div class="stats-g">
+                <div class="sc"><div class="sv" id="hEarn" style="color:var(--brand);">₺1.240</div><div class="sl">Bu hafta</div></div>
+                <div class="sc"><div class="sv">4.9 ★</div><div class="sl">Puanım</div></div>
+                <div class="sc"><div class="sv">98%</div><div class="sl">Güvenilir</div></div>
+              </div>
+            </div>
+            <div id="matchBanner" class="mb" style="display:none;"><div class="spin"></div><div class="mt-txt"><strong>Yakın iş aranıyor...</strong><br>5 km çevrenizde taranıyor</div></div>
+            <div id="ajCard" class="ajb" style="display:none;">
+              <div class="aj-ey">Aktif Vardiya</div>
+              <div class="aj-ti" id="ajTi">—</div>
+              <div class="aj-bt"><div class="aj-in" id="ajIn">—</div><button class="btn-ci" onclick="toast('Check-in tamam! ✓')">Check-in</button></div>
+            </div>
+            <div class="sec" style="margin-top:10px;">
+              <div class="card ec">
+                <div class="et">
+                  <div><div class="el">Bu haftaki kazanç</div><div class="ea" id="earnAmt">₺1.240</div><div class="esub">Hedef: ₺2.000</div></div>
+                  <div class="ebadge">+18%</div>
+                </div>
+                <div class="pb"><div class="pbf" id="earnBar" style="width:62%;"></div></div>
+              </div>
+            </div>
+            <div class="sec">
+              <div class="sh"><span class="st">Becerilerim</span><span class="sa">Düzenle</span></div>
+              <div class="skills-w"><div class="skills-r">
+                <button class="sp active" onclick="this.classList.toggle('active')">Barista</button>
+                <button class="sp active" onclick="this.classList.toggle('active')">Kasiyer</button>
+                <button class="sp active" onclick="this.classList.toggle('active')">Servis</button>
+                <button class="sp" onclick="this.classList.toggle('active')">Depo</button>
+                <button class="sp" onclick="this.classList.toggle('active')">Etkinlik</button>
+                <button class="sp" onclick="this.classList.toggle('active')">Temizlik</button>
+              </div></div>
+            </div>
+            <div class="sec">
+              <div class="sh"><span class="st">Son Aktivite</span></div>
+              <div class="eh">
+                <div class="er"><div class="ei">☕</div><div class="eri"><div class="erb">Karaköy Kafe</div><div class="erm">Barista · Dün 14:00–18:00</div></div><div class="era">₺320</div></div>
+                <div class="er"><div class="ei">🎉</div><div class="eri"><div class="erb">Bosphorus Events</div><div class="erm">Etkinlik · Cmt 18:00–23:00</div></div><div class="era">₺500</div></div>
+                <div class="er"><div class="ei">🛒</div><div class="eri"><div class="erb">Moda Bistro</div><div class="erm">Servis · Cuma 12:00–16:00</div></div><div class="era">₺280</div></div>
+              </div>
+            </div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- WORKER: JOBS -->
+          <div id="wJobs" class="page">
+            <div style="height:8px;"></div>
+            <div class="sh"><span class="st">Açık İşler</span><span class="sa" id="jCount">5 iş</span></div>
+            <div class="frow-x">
+              <button class="fc active" onclick="fj(this,'all')">Tümü</button>
+              <button class="fc" onclick="fj(this,'barista')">Barista</button>
+              <button class="fc" onclick="fj(this,'servis')">Servis</button>
+              <button class="fc" onclick="fj(this,'depo')">Depo</button>
+              <button class="fc" onclick="fj(this,'event')">Etkinlik</button>
+            </div>
+            <div style="height:6px;"></div>
+            <div class="cl" id="jobsL"></div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- WORKER: EARNINGS -->
+          <div id="wEarnings" class="page">
+            <div class="hero">
+              <div class="el">Toplam kazanç (bu ay)</div>
+              <div class="ea" style="margin:3px 0 8px;">₺4.820</div>
+              <div class="stats-g">
+                <div class="sc"><div class="sv">23</div><div class="sl">Vardiya</div></div>
+                <div class="sc"><div class="sv">92sa</div><div class="sl">Çalışılan</div></div>
+                <div class="sc"><div class="sv" style="color:var(--brand);">₺52</div><div class="sl">Saatlik ort.</div></div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="card bc" style="margin:0 14px;">
+              <div class="bc-title">Haftalık Kazanç</div>
+              <div class="bars">
+                <div class="bc-col"><div class="bar f" style="height:45%;"></div><span class="blbl">Pzt</span></div>
+                <div class="bc-col"><div class="bar" style="height:70%;"></div><span class="blbl">Sal</span></div>
+                <div class="bc-col"><div class="bar f" style="height:30%;"></div><span class="blbl">Çar</span></div>
+                <div class="bc-col"><div class="bar" style="height:85%;"></div><span class="blbl">Per</span></div>
+                <div class="bc-col"><div class="bar" style="height:100%;"></div><span class="blbl">Cum</span></div>
+                <div class="bc-col"><div class="bar" style="height:90%;"></div><span class="blbl">Cmt</span></div>
+                <div class="bc-col"><div class="bar f" style="height:55%;"></div><span class="blbl">Paz</span></div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="sh"><span class="st">Tüm Ödemeler</span></div>
+            <div class="eh">
+              <div class="er"><div class="ei">☕</div><div class="eri"><div class="erb">Karaköy Kafe</div><div class="erm">Barista · Dün</div></div><div class="era">₺320</div></div>
+              <div class="er"><div class="ei">🎉</div><div class="eri"><div class="erb">Bosphorus Events</div><div class="erm">Etkinlik · Cmt</div></div><div class="era">₺500</div></div>
+              <div class="er"><div class="ei">🛒</div><div class="eri"><div class="erb">Moda Bistro</div><div class="erm">Servis · Cuma</div></div><div class="era">₺280</div></div>
+              <div class="er"><div class="ei">📦</div><div class="eri"><div class="erb">Logistics Co.</div><div class="erm">Depo · Perşembe</div></div><div class="era">₺360</div></div>
+            </div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- WORKER: PROFILE -->
+          <div id="wProfile" class="page">
+            <div class="prof-h">
+              <div class="pav">AÇ</div>
+              <div class="pname">Ali Çalışkan</div>
+              <div class="psub">İstanbul · Üye Ocak 2024</div>
+              <div class="pbadges">
+                <span class="tag g">✓ Kimlik Doğrulı</span>
+                <span class="tag b">Barista Sertifikalı</span>
+                <span class="tag o">Top Worker</span>
+              </div>
+              <div class="pstats">
+                <div class="pst"><div class="psv">87</div><div class="psl">Vardiya</div></div>
+                <div class="pst"><div class="psv">4.9★</div><div class="psl">Puan</div></div>
+                <div class="pst"><div class="psv">98%</div><div class="psl">Güvenilir</div></div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="sh"><span class="st">Hesap</span></div>
+            <div class="prof-sec">
+              <div class="prow" onclick="toast('Kişisel bilgiler')"><div class="pl"><div class="pic">👤</div><div><div class="plb">Kişisel Bilgiler</div><div class="plsub">Ad, telefon, adres</div></div></div><span style="color:var(--t3);">›</span></div>
+              <div class="prow" onclick="toast('Beceriler açıldı')"><div class="pl"><div class="pic">🎓</div><div><div class="plb">Beceriler & Sertifikalar</div><div class="plsub">7 aktif beceri</div></div></div><span style="color:var(--t3);">›</span></div>
+              <div class="prow" onclick="toast('Çalışma yarıçapı: 5 km')"><div class="pl"><div class="pic">📍</div><div><div class="plb">Çalışma Yarıçapı</div><div class="plsub">5 km aktif</div></div></div><span style="color:var(--t3);">›</span></div>
+              <div class="prow" onclick="toast('Ödeme: IBAN tanımlı')"><div class="pl"><div class="pic">💳</div><div><div class="plb">Ödeme Yöntemi</div><div class="plsub">IBAN tanımlı</div></div></div><span style="color:var(--t3);">›</span></div>
+              <div class="prow" onclick="toast('Vergi özeti hazır')"><div class="pl"><div class="pic">📄</div><div><div class="plb">Vergi Belgesi</div><div class="plsub">2024 yıl sonu hazır</div></div></div><span style="color:var(--t3);">›</span></div>
+            </div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- BUSINESS: DASHBOARD -->
+          <div id="bDash" class="page">
+            <div class="bh">
+              <div class="bh-top">
+                <div><div class="bey">İşveren Paneli</div><div class="bn">Karaköy Espresso Bar</div></div>
+                <button class="btn-acc" onclick="openPost()">+ Vardiya Yayınla</button>
+              </div>
+              <div class="bm-g">
+                <div class="bm"><div class="bmv" style="color:var(--brand);" id="actCount">3</div><div class="bml">Aktif</div></div>
+                <div class="bm"><div class="bmv">8.2dk</div><div class="bml">Doldurma</div></div>
+                <div class="bm"><div class="bmv">4.8★</div><div class="bml">Puan</div></div>
+                <div class="bm"><div class="bmv" style="color:var(--acc);">₺8.4K</div><div class="bml">Bu Ay</div></div>
+              </div>
+            </div>
+            <div id="bizMatchB" class="mb" style="display:none;"><div class="spin"></div><div class="mt-txt"><strong>Eşleşme yapılıyor...</strong><br>12 uygun worker bulundu</div></div>
+            <div style="height:10px;"></div>
+            <div class="card bc" style="margin:0 14px;">
+              <div class="bc-title">Haftalık Harcama</div>
+              <div class="bars">
+                <div class="bc-col"><div class="bar f" style="height:50%;"></div><span class="blbl">Pzt</span></div>
+                <div class="bc-col"><div class="bar" style="height:80%;"></div><span class="blbl">Sal</span></div>
+                <div class="bc-col"><div class="bar f" style="height:40%;"></div><span class="blbl">Çar</span></div>
+                <div class="bc-col"><div class="bar" style="height:95%;"></div><span class="blbl">Per</span></div>
+                <div class="bc-col"><div class="bar" style="height:100%;"></div><span class="blbl">Cum</span></div>
+                <div class="bc-col"><div class="bar" style="height:85%;"></div><span class="blbl">Cmt</span></div>
+                <div class="bc-col"><div class="bar f" style="height:60%;"></div><span class="blbl">Paz</span></div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="sh"><span class="st">Aktif Vardiyalar</span><span class="sa">Tümünü gör</span></div>
+            <div class="cl" id="bizSL"></div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- BUSINESS: SHIFTS -->
+          <div id="bShifts" class="page">
+            <div style="height:8px;"></div>
+            <div class="sh"><span class="st">Tüm Vardiyalar</span><button class="btn-acc" style="font-size:10px;padding:5px 9px;" onclick="openPost()">+ Yeni</button></div>
+            <div class="frow-x">
+              <button class="fc active">Tümü</button>
+              <button class="fc" onclick="toast('Aktif filtre')">Aktif</button>
+              <button class="fc" onclick="toast('Tamamlanan')">Tamamlanan</button>
+            </div>
+            <div style="height:6px;"></div>
+            <div class="cl" id="bizAllL"></div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- BUSINESS: POOL -->
+          <div id="bPool" class="page">
+            <div style="height:8px;"></div>
+            <div class="sh"><span class="st">Favori Çalışanlar</span><span class="sa">+ Ekle</span></div>
+            <div class="cl" id="poolL"></div>
+            <div style="height:12px;"></div>
+          </div>
+
+          <!-- BUSINESS: BILLING -->
+          <div id="bBilling" class="page">
+            <div class="hero">
+              <div class="el">Bu ayki toplam harcama</div>
+              <div class="ea" style="margin:3px 0 8px;">₺8.400</div>
+              <div class="stats-g">
+                <div class="sc"><div class="sv">34</div><div class="sl">Vardiya</div></div>
+                <div class="sc"><div class="sv">136sa</div><div class="sl">Toplam</div></div>
+                <div class="sc"><div class="sv" style="color:var(--brand);">₺62</div><div class="sl">Saatlik ort.</div></div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="sh"><span class="st">Fatura Geçmişi</span></div>
+            <div class="eh">
+              <div class="er"><div class="ei" style="background:#E6F1FB;">🧾</div><div class="eri"><div class="erb">Mart 2025</div><div class="erm">34 vardiya · 136 saat</div></div><div class="era">₺8.400</div></div>
+              <div class="er"><div class="ei" style="background:#E6F1FB;">🧾</div><div class="eri"><div class="erb">Şubat 2025</div><div class="erm">28 vardiya · 112 saat</div></div><div class="era">₺7.100</div></div>
+              <div class="er"><div class="ei" style="background:#E6F1FB;">🧾</div><div class="eri"><div class="erb">Ocak 2025</div><div class="erm">19 vardiya · 76 saat</div></div><div class="era">₺4.900</div></div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="sh"><span class="st">Ödeme Yöntemi</span></div>
+            <div class="prof-sec">
+              <div class="prow" onclick="toast('Visa •••• 4242')"><div class="pl"><div class="pic">💳</div><div><div class="plb">Visa •••• 4242</div><div class="plsub">Varsayılan kart</div></div></div><span style="color:var(--t3);">›</span></div>
+              <div class="prow" onclick="toast('Fatura: Karaköy, İstanbul')"><div class="pl"><div class="pic">🏢</div><div><div class="plb">Fatura Adresi</div><div class="plsub">Karaköy, İstanbul</div></div></div><span style="color:var(--t3);">›</span></div>
+            </div>
+            <div style="height:12px;"></div>
+          </div>
+
+        </div><!-- /scroll -->
+
+        <!-- Worker Nav -->
+        <div class="bnav" id="wNav">
+          <button class="bnav-btn active" id="wn0" onclick="wTab(0,this)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Ana Sayfa</button>
+          <button class="bnav-btn" id="wn1" onclick="wTab(1,this)"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><span class="nbadge">3</span>İşler</button>
+          <button class="bnav-btn" id="wn2" onclick="wTab(2,this)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Kazanç</button>
+          <button class="bnav-btn" id="wn3" onclick="wTab(3,this)"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</button>
+        </div>
+
+        <!-- Business Nav -->
+        <div class="bnav" id="bNav" style="display:none;">
+          <button class="bnav-btn active" id="bn0" onclick="bTab(0,this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Pano</button>
+          <button class="bnav-btn" id="bn1" onclick="bTab(1,this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nbadge">2</span>Vardiyalar</button>
+          <button class="bnav-btn" id="bn2" onclick="bTab(2,this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Havuz</button>
+          <button class="bnav-btn" id="bn3" onclick="bTab(3,this)"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Ödemeler</button>
+        </div>
+
+      </div><!-- /app-shell -->
+
+      <!-- POST MODAL -->
+      <div class="modal-ov" id="postMod">
+        <div class="modal-sh">
+          <div class="mh-w"><div class="mh"></div></div>
+          <div class="mtitle">Yeni Vardiya Yayınla</div>
+          <label class="flbl">Pozisyon</label>
+          <select class="fsel" id="mRole" onchange="calcC()">
+            <option value="">Seçiniz...</option>
+            <option>Barista</option><option>Kasiyer</option>
+            <option>Servis Elemanı</option><option>Depo Görevlisi</option>
+            <option>Etkinlik Personeli</option>
+          </select>
+          <div class="frow2">
+            <div><label class="flbl">Başlangıç</label><input type="time" class="finp" id="mStart" value="14:00" onchange="calcC()"></div>
+            <div><label class="flbl">Bitiş</label><input type="time" class="finp" id="mEnd" value="18:00" onchange="calcC()"></div>
+          </div>
+          <label class="flbl">Saatlik Ücret (₺)</label>
+          <input type="number" class="finp" id="mRate" value="80" min="40" onchange="calcC()">
+          <div class="cprev">
+            <div><div class="cpl">Toplam maliyet</div><div class="cpv" id="cpT">₺320</div></div>
+            <div style="text-align:right;"><div class="cpl">Worker alır</div><div class="cpv" id="cpW">₺256</div></div>
+          </div>
+          <button class="btn-full" onclick="doPost()">Vardiyayı Yayınla</button>
+          <button class="btn-cancel" onclick="closeMod('postMod')">İptal</button>
+        </div>
+      </div>
+
+      <!-- JOB DETAIL MODAL -->
+      <div class="modal-ov" id="jdMod">
+        <div class="modal-sh">
+          <div class="mh-w"><div class="mh"></div></div>
+          <div class="mtitle" id="jdT">—</div>
+          <div class="dmap">📍 Harita · <span id="jdDist">—</span> uzaklıkta</div>
+          <div id="jdRows"></div>
+          <div style="height:14px;"></div>
+          <button class="btn-full" id="jdOkBtn" style="background:var(--brand);">Vardiyayı Kabul Et</button>
+          <button class="btn-cancel" onclick="closeMod('jdMod')">Kapat</button>
+        </div>
+      </div>
+
+      <!-- RATING MODAL -->
+      <div class="modal-ov" id="rateMod">
+        <div class="modal-sh">
+          <div class="mh-w"><div class="mh"></div></div>
+          <div class="mtitle">Vardiyayı Değerlendir</div>
+          <p style="font-size:13px;color:var(--t2);" id="rateSub">Çalışanı puanlayın</p>
+          <div class="stars" id="starsR">
+            <button class="star" onclick="setStar(1)">★</button>
+            <button class="star" onclick="setStar(2)">★</button>
+            <button class="star" onclick="setStar(3)">★</button>
+            <button class="star" onclick="setStar(4)">★</button>
+            <button class="star" onclick="setStar(5)">★</button>
+          </div>
+          <label class="flbl">Yorum</label>
+          <textarea class="finp" style="height:70px;resize:none;" placeholder="Kısa bir not..."></textarea>
+          <button class="btn-full" onclick="doRate()" style="background:var(--brand);">Puanı Gönder</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toastEl"></div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-controls">
+  <button class="dc-btn" onclick="demoOnline()">▶ Online ol</button>
+  <button class="dc-btn" onclick="demoAccept()">▶ İş kabul et</button>
+  <button class="dc-btn" onclick="demoPost()">▶ Vardiya yayınla</button>
+  <button class="dc-btn" onclick="sw('business')">▶ Business görünümü</button>
+</div>
+
+<div class="share-hint">
+  Bu dosyayı tarayıcıda aç · Arkadaşlarınla paylaş · Geri bildirim al<br>
+  shiftly-demo.html
+</div>
+
+<script>
+const JOBS=[
+  {id:1,biz:'Karaköy Kafe',role:'Barista',cat:'barista',pay:80,hours:'14:00–18:00',dur:'4 saat',dist:'1.2 km',urg:true,desc:'Espresso bar deneyimi tercih. Önlük sağlanır.'},
+  {id:2,biz:'Moda Bistro',role:'Servis Elemanı',cat:'servis',pay:70,hours:'12:00–16:00',dur:'4 saat',dist:'2.8 km',urg:false,desc:'Öğle servisi. Tecrübe gerekli.'},
+  {id:3,biz:'Logistics Co.',role:'Depo Görevlisi',cat:'depo',pay:90,hours:'08:00–12:00',dur:'4 saat',dist:'4.1 km',urg:false,desc:'Forklift sertifikası avantaj.'},
+  {id:4,biz:'Bosphorus Events',role:'Etkinlik Personeli',cat:'event',pay:100,hours:'18:00–23:00',dur:'5 saat',dist:'3.5 km',urg:true,desc:'VIP etkinlik. Siyah kıyafet zorunlu.'},
+  {id:5,biz:'Grand Patisserie',role:'Barista',cat:'barista',pay:75,hours:'09:00–13:00',dur:'4 saat',dist:'0.9 km',urg:false,desc:'Butik pastane. Sıcak içecek şart.'},
+];
+const SHIFTS=[
+  {id:1,role:'Barista',w:'Ahmet K.',in:'AÇ',rt:'4.9',st:'active',time:'14:00–18:00',pay:320},
+  {id:2,role:'Kasiyer',w:'Leyla M.',in:'LM',rt:'4.7',st:'active',time:'12:00–17:00',pay:400},
+  {id:3,role:'Servis Elemanı',w:'—',in:'?',rt:'—',st:'pending',time:'19:00–23:00',pay:320},
+  {id:4,role:'Barista',w:'Deniz Y.',in:'DY',rt:'5.0',st:'completed',time:'09:00–13:00',pay:300},
+];
+const POOL=[
+  {n:'Deniz Yılmaz',in:'DY',s:'Barista · Kasiyer · Servis',r:80,sh:47,rel:99},
+  {n:'Selin Arslan',in:'SA',s:'Barista · Kahvaltı',r:75,sh:31,rel:97},
+  {n:'Tarık Öz',in:'TÖ',s:'Servis · Etkinlik · Depo',r:85,sh:62,rel:100},
+  {n:'Büşra Koç',in:'BK',s:'Etkinlik · Kasiyer',r:72,sh:18,rel:94},
+];
+let isOnline=false,earn=1240,starVal=0,curMode='worker',curFilter='all';
+
+function renderJobs(f){
+  curFilter=f;
+  const d=f==='all'?JOBS:JOBS.filter(j=>j.cat===f);
+  document.getElementById('jCount').textContent=d.length+' iş';
+  document.getElementById('jobsL').innerHTML=d.map(j=>`
+    <div class="card jc ${j.urg?'urg':''}" onclick="openJD(${j.id})">
+      <div class="jt"><div><div class="jbiz">${j.biz}</div><div class="jrole">${j.role}</div></div><div><div class="jpay">₺${j.pay}</div><div class="jpsub">/saat</div></div></div>
+      <div class="jtags"><span class="tag g">${j.role}</span><span class="tag">${j.hours}</span><span class="tag">${j.dist}</span>${j.urg?'<span class="tag r">Acil</span>':''}</div>
+      <div class="jactions"><button class="btn-p" onclick="event.stopPropagation();doAccept(${j.id})">Kabul Et</button><button class="btn-s" onclick="event.stopPropagation();skipJ(${j.id})">Geç</button></div>
+    </div>`).join('');
+}
+function renderShifts(el,data){
+  document.getElementById(el).innerHTML=data.map(s=>`
+    <div class="card shc">
+      <div class="sh-top"><div class="sh-role">${s.role}</div><span class="tag ${s.st==='active'?'g':s.st==='pending'?'o':''}">${s.st==='active'?'Aktif':s.st==='pending'?'Eşleşiyor...':'Tamamlandı'}</span></div>
+      <div class="sh-wrow"><div class="av av-s">${s.in}</div><div><div class="sh-wn">${s.w}</div><div class="sh-wr">${s.rt!=='—'?'★ '+s.rt+' · Güvenilir':'Eşleşme bekleniyor'}</div></div></div>
+      <div class="jtags"><span class="tag">${s.time}</span><span class="tag g">₺${s.pay}</span></div>
+      ${s.st!=='pending'?`<div class="sh-acts"><button class="btn-sm" onclick="openRate('${s.w}')">Puanla</button><button class="btn-sm p">Detay</button></div>`:`<div class="sh-acts"><button class="btn-sm" onclick="toast('İptal edildi')">İptal Et</button></div>`}
+    </div>`).join('');
+}
+function renderPool(){
+  document.getElementById('poolL').innerHTML=POOL.map(w=>`
+    <div class="card pc">
+      <div class="av" style="width:40px;height:40px;font-size:12px;">${w.in}</div>
+      <div class="pi"><div class="pn">${w.n}</div><div class="ps">${w.s}</div></div>
+      <div class="pr-right"><div class="prate">₺${w.r}/sa</div><div class="prel">%${w.rel} güvenilir</div><div style="font-size:9px;color:var(--t3);">${w.sh} vardiya</div></div>
+    </div>`).join('');
+}
+function sw(m){
+  curMode=m;
+  document.getElementById('btnW').classList.toggle('active',m==='worker');
+  document.getElementById('btnB').classList.toggle('active',m==='business');
+  document.getElementById('navAv').textContent=m==='worker'?'AÇ':'KE';
+  document.getElementById('wNav').style.display=m==='worker'?'flex':'none';
+  document.getElementById('bNav').style.display=m==='business'?'flex':'none';
+  ['wHome','wJobs','wEarnings','wProfile','bDash','bShifts','bPool','bBilling'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(m==='worker'?'wHome':'bDash').classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(m==='worker'?'wn0':'bn0').classList.add('active');
+  document.getElementById('scrollArea').scrollTop=0;
+}
+function wTab(i,btn){
+  ['wHome','wJobs','wEarnings','wProfile'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(['wHome','wJobs','wEarnings','wProfile'][i]).classList.add('active');
+  document.querySelectorAll('#wNav .bnav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('scrollArea').scrollTop=0;
+  if(i===1)renderJobs(curFilter);
+}
+function bTab(i,btn){
+  ['bDash','bShifts','bPool','bBilling'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(['bDash','bShifts','bPool','bBilling'][i]).classList.add('active');
+  document.querySelectorAll('#bNav .bnav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('scrollArea').scrollTop=0;
+  if(i===1)renderShifts('bizAllL',SHIFTS);
+  if(i===2)renderPool();
+}
+function fj(el,f){
+  document.querySelectorAll('.frow-x .fc').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');renderJobs(f);
+}
+function toggleOnline(){
+  isOnline=!isOnline;
+  document.getElementById('onBtn').classList.toggle('on',isOnline);
+  document.getElementById('olbl').textContent=isOnline?'Çevrimiçi':'Çevrimdışı';
+  if(isOnline){document.getElementById('matchBanner').style.display='flex';toast('Aktif iş araması başladı!');setTimeout(()=>document.getElementById('matchBanner').style.display='none',3200);}
+  else{document.getElementById('matchBanner').style.display='none';toast('Çevrimdışı oldunuz');}
+}
+function doAccept(id){
+  const j=JOBS.find(x=>x.id===id);if(!j)return;
+  earn+=j.pay*4;
+  const pct=Math.min(100,Math.round(earn/2000*100));
+  document.getElementById('earnAmt').textContent='₺'+earn.toLocaleString('tr-TR');
+  document.getElementById('hEarn').textContent='₺'+earn.toLocaleString('tr-TR');
+  document.getElementById('earnBar').style.width=pct+'%';
+  document.getElementById('ajCard').style.display='block';
+  document.getElementById('ajTi').textContent=j.biz+' — '+j.role;
+  document.getElementById('ajIn').textContent=j.hours+' · ₺'+(j.pay*4)+' kazanç';
+  closeMod('jdMod');toast(j.biz+' kabul edildi!');
+  const el=document.querySelector(`[onclick*="doAccept(${id})"]`);
+  if(el)el.closest('.card').remove();
+}
+function skipJ(id){const el=document.querySelector(`[onclick*="skipJ(${id})"]`);if(el)el.closest('.card').remove();toast('İş atlandı');}
+function openJD(id){
+  const j=JOBS.find(x=>x.id===id);if(!j)return;
+  document.getElementById('jdT').textContent=j.biz+' — '+j.role;
+  document.getElementById('jdDist').textContent=j.dist;
+  document.getElementById('jdRows').innerHTML=`
+    <div class="drow"><span>Ücret</span><span style="color:var(--brand);font-weight:700;">₺${j.pay}/sa · ₺${j.pay*4} toplam</span></div>
+    <div class="drow"><span>Saat</span><span>${j.hours} (${j.dur})</span></div>
+    <div class="drow"><span>Konum</span><span>${j.dist} uzaklıkta</span></div>
+    <div class="drow"><span>Not</span><span style="font-size:12px;">${j.desc}</span></div>`;
+  document.getElementById('jdOkBtn').onclick=()=>doAccept(id);
+  document.getElementById('jdMod').classList.add('open');
+}
+function openPost(){document.getElementById('postMod').classList.add('open');calcC();}
+function calcC(){
+  const rate=parseFloat(document.getElementById('mRate').value)||80;
+  const s=document.getElementById('mStart').value,e=document.getElementById('mEnd').value;
+  let h=4;
+  if(s&&e){const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);h=Math.max(1,((eh*60+em)-(sh*60+sm))/60);}
+  const t=Math.round(rate*h);
+  document.getElementById('cpT').textContent='₺'+t.toLocaleString('tr-TR');
+  document.getElementById('cpW').textContent='₺'+Math.round(t*0.8).toLocaleString('tr-TR');
+}
+function doPost(){
+  const role=document.getElementById('mRole').value;
+  if(!role){toast('Pozisyon seçin');return;}
+  closeMod('postMod');
+  document.getElementById('bizMatchB').style.display='flex';
+  toast('Vardiya yayınlandı! Eşleşme başlıyor...');
+  setTimeout(()=>{
+    document.getElementById('bizMatchB').style.display='none';
+    SHIFTS.unshift({id:99,role,w:'Deniz Y.',in:'DY',rt:'4.9',st:'active',time:document.getElementById('mStart').value+'–'+document.getElementById('mEnd').value,pay:parseInt(document.getElementById('cpT').textContent.replace(/\D/g,''))});
+    renderShifts('bizSL',SHIFTS.slice(0,3));
+    document.getElementById('actCount').textContent=parseInt(document.getElementById('actCount').textContent)+1;
+    toast('Eşleşme bulundu! Deniz Y. kabul etti ✓');
+  },3000);
+}
+function openRate(name){
+  starVal=0;document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));
+  document.getElementById('rateSub').textContent=name+' için puan verin';
+  document.getElementById('rateMod').classList.add('open');
+}
+function setStar(n){starVal=n;document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));}
+function doRate(){if(!starVal){toast('Puan seçin');return;}closeMod('rateMod');toast(starVal+'★ gönderildi!');}
+function closeMod(id){document.getElementById(id).classList.remove('open');}
+let tt;
+function toast(msg){const el=document.getElementById('toastEl');el.textContent=msg;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2600);}
+function demoOnline(){sw('worker');wTab(0,document.getElementById('wn0'));setTimeout(toggleOnline,400);}
+function demoAccept(){sw('worker');wTab(1,document.getElementById('wn1'));setTimeout(()=>{renderJobs('all');setTimeout(()=>doAccept(1),600);},300);}
+function demoPost(){sw('business');bTab(0,document.getElementById('bn0'));setTimeout(openPost,500);}
+
+renderJobs('all');
+renderShifts('bizSL',SHIFTS.slice(0,3));
+renderPool();
+</script>
+</body>
+</html>
